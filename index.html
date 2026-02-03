@@ -6,147 +6,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  font-family:'Poppins',sans-serif;
-  overflow:hidden;
-}
-
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:Poppins,sans-serif}
 .hidden{display:none}
+body.romantic{background:radial-gradient(circle,#ff9dbb,#ff4f87)}
+body.birthday{background:radial-gradient(circle,#ffe066,#ffb703)}
 
-/* BACKGROUNDS */
-body.romantic{
-  background:radial-gradient(circle,#ff9dbb,#ff4f87);
-}
-body.birthday{
-  background:radial-gradient(circle,#ffe066,#ffb703);
-}
+.center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:5}
+.box{background:#fff;padding:40px;border-radius:25px;box-shadow:0 20px 50px rgba(0,0,0,.25);max-width:520px;text-align:center}
 
-/* FLOATING FX */
-.fx{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-}
-.fx span{
-  position:absolute;
-  animation:float 12s linear infinite;
-  font-size:60px;
-  opacity:.35;
-}
-@keyframes float{
-  from{transform:translateY(110vh)}
-  to{transform:translateY(-120vh)}
-}
-
-/* CENTER BOX */
-.center{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  text-align:center;
-  z-index:5;
-}
-.box{
-  background:white;
-  padding:40px;
-  border-radius:25px;
-  box-shadow:0 20px 50px rgba(0,0,0,.25);
-  max-width:500px;
-}
-
-/* BUTTONS */
-button{
-  border:none;
-  padding:14px 26px;
-  border-radius:30px;
-  font-size:18px;
-  cursor:pointer;
-}
+button{border:none;padding:14px 26px;border-radius:30px;font-size:18px;cursor:pointer}
 .yes{background:#ff3b7a;color:white}
 .no{background:#eee}
 
-/* PHOTO STAGE */
-.stage{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:140px;
-}
-.card{
-  width:520px;
-  height:680px;
-  perspective:1400px;
-}
-.inner{
-  width:100%;
-  height:100%;
-  position:relative;
-  transform-style:preserve-3d;
-  transition:1s;
-}
+.stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:140px}
+.card{width:520px;height:680px;perspective:1400px}
+.inner{width:100%;height:100%;transition:1s;transform-style:preserve-3d}
 .card.flip .inner{transform:rotateY(180deg)}
-.face{
-  position:absolute;
-  inset:0;
-  backface-visibility:hidden;
-  border-radius:30px;
-  overflow:hidden;
-  box-shadow:0 30px 70px rgba(0,0,0,.35);
-}
-.face img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-.back{
-  transform:rotateY(180deg);
-  background:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:40px;
-  font-size:24px;
-  line-height:1.5;
-}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:30px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.35)}
+.face img{width:100%;height:100%;object-fit:cover}
+.back{transform:rotateY(180deg);background:white;display:flex;align-items:center;justify-content:center;padding:40px;font-size:24px}
 
-/* CLICK ME */
-.action{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-}
-.clickme{
-  background:#ff3b7a;
-  color:white;
-  font-size:20px;
-}
+.action{display:flex;flex-direction:column;gap:20px}
+.clickme{background:#ff3b7a;color:white}
 
-/* TYPING */
-#typing{
-  font-size:28px;
-  color:white;
-  width:80%;
-  text-align:center;
-}
-
-/* WISH */
-#wishGen h2{margin-bottom:10px}
+#typing{font-size:28px;color:white;width:80%;text-align:center}
 </style>
 </head>
 
 <body class="romantic">
-
-<!-- FX -->
-<div class="fx" id="fx"></div>
 
 <!-- VALENTINE -->
 <div class="center" id="start">
@@ -163,9 +50,7 @@ button{
 <div class="stage hidden" id="stage">
   <div class="card" id="card">
     <div class="inner">
-      <div class="face front">
-        <img id="photo">
-      </div>
+      <div class="face front"><img id="photo"></div>
       <div class="face back" id="message"></div>
     </div>
   </div>
@@ -174,19 +59,14 @@ button{
   </div>
 </div>
 
-<!-- WHY I CHOOSE YOU -->
-<div class="center hidden" id="why">
-  <div id="typing"></div>
-</div>
+<!-- WHY -->
+<div class="center hidden" id="why"><div id="typing"></div></div>
 
 <!-- CONTRACT -->
 <div class="center hidden" id="contract">
   <div class="box">
     <h2>❤️ Love Contract ❤️</h2>
-    <p>
-      By touching below, you agree to unlimited love, patience,
-      mana-o-ing, hugs and forever us.
-    </p>
+    <p>By touching below, you agree to unlimited love, mana-o-ing & forever us.</p>
     <button id="sign">Sign with thumb 💕</button>
   </div>
 </div>
@@ -196,13 +76,12 @@ button{
   <h1 id="count" style="font-size:80px;color:white"></h1>
 </div>
 
-<!-- WISH -->
+<!-- WISH GENERATOR -->
 <div class="center hidden" id="wishGen">
   <div class="box">
     <h2>🎁 Birthday Wish Generator 🎰</h2>
     <p id="wishText">Click to generate today’s wish 💖</p>
-    <button id="wishBtn">Generate today’s wish 🎁</button>
-    <br><br>
+    <button id="wishBtn">Generate today’s wish 🎁</button><br><br>
     <button id="wishDone" class="hidden">Continue 🎉</button>
   </div>
 </div>
@@ -218,7 +97,6 @@ const birthdayPhotos=[
  {src:"photos/bday2.jpg",msg:"25 looks unreal on you."},
  {src:"photos/bday3.jpg",msg:"You light up every room you walk into."}
 ];
-
 const wishes=[
  "Unlimited hugs — redeem anytime 🤗",
  "Lifetime supply of mana-o-ing 💕",
@@ -228,6 +106,7 @@ const wishes=[
 ];
 
 let set=romanticPhotos,i=0,noCount=0;
+
 const start=document.getElementById("start");
 const stage=document.getElementById("stage");
 const photo=document.getElementById("photo");
@@ -238,7 +117,7 @@ const clickMe=document.getElementById("clickMe");
 document.getElementById("noBtn").onmouseover=()=>{
   noCount++;
   document.getElementById("noBtn").style.transform=
-    `translate(${Math.random()*200-100}px,${Math.random()*150-75}px)`;
+   `translate(${Math.random()*200-100}px,${Math.random()*150-75}px)`;
   if(noCount>3) alert("Haha 😈 there’s no escape. Press Yes ❤️");
 };
 
@@ -265,7 +144,7 @@ function next(){
   i++;
   if(i<set.length){load();}
   else if(set===romanticPhotos){whyChoose();}
-  else showWish();
+  else {showWish();} // ✅ ONLY AFTER birthday photos end
 }
 
 function whyChoose(){
@@ -281,7 +160,10 @@ function whyChoose(){
   document.getElementById("why").classList.remove("hidden");
   const iv=setInterval(()=>{
     el.textContent+=lines[t][c++]||"";
-    if(c>=lines[t].length){t++;c=0;el.textContent+="\n";if(t>=lines.length){clearInterval(iv);setTimeout(contract,1500);}}
+    if(c>=lines[t].length){
+      t++;c=0;el.textContent+="\n";
+      if(t>=lines.length){clearInterval(iv);setTimeout(contract,1500);}
+    }
   },80);
 }
 
@@ -303,13 +185,18 @@ function countdown(){
   let n=3;
   const iv=setInterval(()=>{
     c.textContent=n--;
-    if(n<0){clearInterval(iv);cd.classList.add("hidden");switchBirthday();}
+    if(n<0){
+      clearInterval(iv);
+      cd.classList.add("hidden");
+      switchBirthday();
+    }
   },1000);
 }
 
 function switchBirthday(){
   document.body.className="birthday";
-  set=birthdayPhotos;i=0;
+  set=birthdayPhotos;
+  i=0;
   stage.classList.remove("hidden");
   load();
 }
@@ -321,9 +208,10 @@ function showWish(){
 
 document.getElementById("wishBtn").onclick=()=>{
   document.getElementById("wishText").textContent=
-    wishes[Math.floor(Math.random()*wishes.length)];
+   wishes[Math.floor(Math.random()*wishes.length)];
   document.getElementById("wishDone").classList.remove("hidden");
 };
+
 document.getElementById("wishDone").onclick=()=>{
   alert("Happy Valentine’s Day ❤️\nHappy Birthday 🎂\nI love you.");
 };
