@@ -3,206 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <title>For You ❤️</title>
+
 <style>
-*{box-sizing:border-box;font-family:"Poppins",sans-serif}
+*{box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{
   margin:0;
+  min-height:100vh;
   background:#000;
-  overflow:hidden;
-  transition:background 3s;
-}
-body.romantic{background:radial-gradient(#2a0000,#000)}
-body.birthday{background:radial-gradient(#3b2a00,#000)}
-
-.banner{
-  position:fixed;
-  top:15px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#fff;
-  padding:10px 25px;
-  border-radius:30px;
-  font-weight:600;
-  z-index:50;
-  transition:opacity .8s;
-}
-.banner.hidden{opacity:0}
-
-.centerBox{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#fff;
-  padding:30px;
-  border-radius:20px;
-  text-align:center;
-  z-index:20;
-}
-button{
-  padding:12px 25px;
-  border:none;
-  border-radius:30px;
-  cursor:pointer;
-  font-size:16px;
-}
-#noBtn{position:absolute}
-
-.slideWrap{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:80px;
-  position:absolute;
-  inset:0;
+  overflow:hidden;
+  transition:background 2s ease;
 }
-.card{
+
+/* ===== COMMON ===== */
+.hidden{display:none}
+.center{
+  position:relative;
+  background:white;
+  padding:40px 50px;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  text-align:center;
+  z-index:5;
+}
+button{
+  padding:14px 28px;
+  font-size:18px;
+  border-radius:40px;
+  border:none;
+  cursor:pointer;
+}
+
+/* ===== VALENTINE SCREEN ===== */
+#question h1{font-size:36px;margin-bottom:25px}
+#yes{background:#ff3b7a;color:#fff}
+#no{
+  background:#eee;
+  position:absolute;
+}
+.btns{margin-top:30px;position:relative;height:80px}
+#banner{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:12px 30px;
+  border-radius:40px;
+  font-weight:600;
+  z-index:10;
+}
+
+/* ===== SLIDES ===== */
+#slideshow{
+  display:flex;
+  align-items:center;
+  gap:80px;
+}
+.photo{
   width:520px;
-  height:720px;
+  height:700px;
   perspective:1200px;
 }
-.inner{
+.card{
   width:100%;
   height:100%;
-  transition:transform 1s;
+  position:relative;
   transform-style:preserve-3d;
+  transition:transform 1s ease;
 }
-.card.flip .inner{transform:rotateY(180deg)}
+.card.flipped{transform:rotateY(180deg)}
 .face{
   position:absolute;
-  inset:0;
+  width:100%;
+  height:100%;
   backface-visibility:hidden;
   border-radius:20px;
   overflow:hidden;
 }
-.face img{width:100%;height:100%;object-fit:cover}
+.face img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 .back{
-  background:#fff;
+  background:white;
   transform:rotateY(180deg);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:30px;
+  padding:40px;
+  font-size:22px;
+  line-height:1.6;
+}
+
+/* ===== CLICK ME ===== */
+#clickBox{
+  width:220px;
+}
+#clickBtn{
+  background:#ff3b7a;
+  color:white;
   font-size:20px;
 }
 
-.clickMe{
-  background:#ff3366;
-  color:#fff;
-  font-size:18px;
-}
+/* ===== THEMES ===== */
+.romantic{background:linear-gradient(#ff9bbf,#ffd1e6)}
+.birthday{background:linear-gradient(#ffe27a,#ffd36a)}
 
-.hidden{display:none}
-
-/* Background FX */
-.fx span{
+/* ===== FLOATING DECOR ===== */
+.float{
   position:absolute;
-  animation:float 12s linear infinite;
-  opacity:.4;
-  font-size:60px;
+  animation:floatUp 8s linear infinite;
+  opacity:.7;
 }
-@keyframes float{
-  from{transform:translateY(110vh)}
-  to{transform:translateY(-20vh)}
+@keyframes floatUp{
+  from{transform:translateY(100vh)}
+  to{transform:translateY(-150vh)}
 }
 </style>
 </head>
 
 <body>
 
-<div class="banner" id="banner">💕 Happy Valentine’s Day, baby 💕</div>
+<div id="banner" class="hidden"></div>
 
-<div class="centerBox" id="askBox">
-  <h2>Will you be my Valentine? ❤️</h2>
-  <button onclick="yes()">Yes</button>
-  <button id="noBtn">No</button>
+<!-- VALENTINE QUESTION -->
+<div id="question" class="center">
+  <h1>Baby, will you be my Valentine? 💖</h1>
+  <div class="btns">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
 </div>
 
-<div class="slideWrap hidden" id="slides">
-  <div class="card" id="card">
-    <div class="inner">
+<!-- SLIDES -->
+<div id="slideshow" class="hidden">
+  <div class="photo">
+    <div class="card" id="card">
       <div class="face front"><img id="photo"></div>
-      <div class="face back" id="msg"></div>
+      <div class="face back" id="message"></div>
     </div>
   </div>
-  <button class="clickMe hidden" id="clickBtn">❤️ Click Me</button>
+  <div id="clickBox">
+    <button id="clickBtn">💖 Click Me</button>
+  </div>
 </div>
 
+<!-- AUDIO -->
 <audio id="romantic" src="music/romantic.mp3"></audio>
 <audio id="birthday" src="music/birthday.mp3"></audio>
 
 <script>
-const noBtn=document.getElementById("noBtn");
-let noCount=0;
+/* ========= DATA ========= */
+const romanticSlides=[
+ {img:"photos/romantic/romantic1.jpg",msg:"Every time I look at us, I smile without even trying."},
+ {img:"photos/romantic/romantic2.jpg",msg:"I love doing life with you — eating, roaming, laughing, mana-ing you 😌"},
+ {img:"photos/romantic/romantic3.jpg",msg:"You are my calm, my chaos, my happiest place."}
+];
+
+const birthdaySlides=[
+ {img:"photos/birthday/birthday1.jpg",msg:"25 looks unbelievably perfect on you 🎂"},
+ {img:"photos/birthday/birthday2.jpg",msg:"May your smile always stay this bright 💫"},
+ {img:"photos/birthday/birthday3.jpg",msg:"Happy Birthday, my favorite human ❤️"}
+];
+
+/* ========= STATE ========= */
+let set=[],index=0,noCount=0;
+
+/* ========= ELEMENTS ========= */
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const q=document.getElementById("question");
+const slide=document.getElementById("slideshow");
+const card=document.getElementById("card");
+const photo=document.getElementById("photo");
+const msg=document.getElementById("message");
+const clickBtn=document.getElementById("clickBtn");
+const banner=document.getElementById("banner");
+const romantic=document.getElementById("romantic");
+const birthday=document.getElementById("birthday");
+
+/* ========= NO BUTTON ========= */
 noBtn.onmouseover=()=>{
   noCount++;
-  noBtn.style.left=Math.random()*80+"%";
-  noBtn.style.top=Math.random()*80+"%";
-  if(noCount===3) alert("Haha 😌 there is no escape");
+  noBtn.style.left=Math.random()*200+"px";
+  noBtn.style.top=Math.random()*60+"px";
+  if(noCount>=4) alert("Haha 😈 no escape… only YES 😘");
 };
 
-const romanticPhotos=[
-  {img:"photos/romantic1.jpg",msg:"Every picture here holds a thousand feelings ❤️"},
-  {img:"photos/romantic2.jpg",msg:"I love doing everything with you — even mana-o-ing you 😌"},
-  {img:"photos/romantic3.jpg",msg:"No matter what, I’m always here for you"}
-];
-
-const birthdayPhotos=[
-  {img:"photos/birthday1.jpg",msg:"Another year of your beautiful smile 🎂"},
-  {img:"photos/birthday2.jpg",msg:"You make life brighter every day ✨"},
-  {img:"photos/birthday3.jpg",msg:"Here’s to many birthdays together ❤️"}
-];
-
-let set=romanticPhotos,i=0;
-
-function yes(){
-  askBox.remove();
+/* ========= YES ========= */
+yesBtn.onclick=()=>{
+  q.classList.add("hidden");
+  banner.textContent="💖 Happy Valentine’s Day, baby 💖";
+  banner.classList.remove("hidden");
   document.body.classList.add("romantic");
   romantic.play();
-  slides.classList.remove("hidden");
-  loadSlide();
-}
+  set=romanticSlides;
+  index=0;
+  showSlide();
+};
 
-function loadSlide(){
-  card.classList.remove("flip");
+/* ========= SLIDES ========= */
+function showSlide(){
+  slide.classList.remove("hidden");
+  card.classList.remove("flipped");
+  photo.src=set[index].img;
+  msg.textContent=set[index].msg;
   clickBtn.classList.remove("hidden");
-  photo.src=set[i].img;
-  msg.textContent=set[i].msg;
 }
 
 clickBtn.onclick=()=>{
+  card.classList.add("flipped");
   clickBtn.classList.add("hidden");
-  card.classList.add("flip");
   setTimeout(nextSlide,6000);
 };
 
 function nextSlide(){
-  i++;
-  if(i>=set.length){
-    if(set===romanticPhotos){
+  index++;
+  if(index<set.length){
+    showSlide();
+  }else{
+    if(set===romanticSlides){
       transitionToBirthday();
     }else{
-      end();
+      finish();
     }
-    return;
   }
-  loadSlide();
 }
 
+/* ========= TRANSITION ========= */
 function transitionToBirthday(){
   banner.textContent="🎂 Happy Birthday, baby 🎂";
-  document.body.classList.replace("romantic","birthday");
+  document.body.classList.remove("romantic");
+  document.body.classList.add("birthday");
   romantic.pause();
   birthday.play();
-  set=birthdayPhotos;
-  i=0;
-  loadSlide();
+  set=birthdaySlides;
+  index=0;
+  showSlide();
 }
 
-function end(){
+/* ========= END ========= */
+function finish(){
   banner.classList.add("hidden");
-  alert("Happy Valentine’s Day ❤️\nHappy Birthday 🎂");
+  slide.classList.add("hidden");
+  alert("💖 Happy Valentine’s Day\n🎂 Happy Birthday\n\nWhen you miss me — open this again ❤️");
 }
 </script>
+
 </body>
 </html>
