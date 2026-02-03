@@ -1,241 +1,462 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>For You ❤️</title>
+<meta charset="UTF-8">
+<title>For You ❤️</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+body{
+  margin:0;
+  font-family:system-ui, sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  transition:background 4s ease;
+}
 
-  <style>
-    :root {
-      --pink1: #ffd6e7;
-      --pink2: #fff0f6;
-      --accent: #ff3b7a;
-    }
+body.start{background:#ffeef4;}
+body.valentine{background:radial-gradient(circle at top,#ffd1dc,#ff8fab);}
+body.birthday{background:linear-gradient(#fff0b3,#ffd166);}
 
-    * { box-sizing: border-box; }
+.hidden{display:none;}
+.center{width:900px;text-align:center;z-index:3;}
 
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: radial-gradient(circle at top, var(--pink2), var(--pink1));
-      color: #111;
-    }
+.box{
+  background:white;
+  padding:32px;
+  border-radius:26px;
+  box-shadow:0 30px 70px rgba(0,0,0,.3);
+}
 
-    section {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-    }
+button{
+  padding:16px 30px;
+  border-radius:999px;
+  border:none;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    .card {
-      background: rgba(255,255,255,.9);
-      border-radius: 26px;
-      padding: 32px;
-      max-width: 760px;
-      width: 100%;
-      box-shadow: 0 18px 50px rgba(0,0,0,.15);
-    }
+#yes{background:#ff3b7a;color:white;}
+#no{background:#eee;position:absolute;}
+.zone{position:relative;height:130px;margin-top:20px;}
 
-    h1, h2 { margin: 12px 0; }
+.banner{
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:14px 30px;
+  border-radius:999px;
+  font-weight:800;
+  box-shadow:0 14px 32px rgba(0,0,0,.3);
+  z-index:4;
+}
 
-    button {
-      padding: 16px 28px;
-      border-radius: 999px;
-      border: none;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(0,0,0,.15);
-      transition: transform .25s ease;
-    }
+.fx{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+}
 
-    #yesBtn {
-      background: var(--accent);
-      color: white;
-    }
+/* Romantic FX */
+.heart{
+  position:absolute;
+  bottom:-120px;
+  font-size:120px;
+  opacity:.35;
+  animation:floatUp linear infinite;
+}
+.tulip{
+  position:absolute;
+  bottom:-120px;
+  font-size:90px;
+  opacity:.35;
+  animation:bloom 14s ease-in-out infinite;
+}
 
-    #noBtn {
-      background: #e5e7eb;
-      color: #111;
-      position: absolute;
-    }
+@keyframes floatUp{to{transform:translateY(-140vh);}}
+@keyframes bloom{
+  0%{transform:scale(.3);opacity:0;}
+  40%{opacity:.4;}
+  70%{transform:scale(1) translateY(-80vh);}
+  100%{opacity:0;}
+}
 
-    .button-zone {
-      position: relative;
-      height: 160px;
-      margin-top: 28px;
-    }
+/* Birthday FX */
+.confetti{
+  position:absolute;
+  top:-80px;
+  font-size:60px;
+  animation:fall linear infinite;
+}
+.rocket{
+  position:absolute;
+  bottom:-100px;
+  font-size:70px;
+  animation:launch 4s linear infinite;
+}
+.burst{
+  position:absolute;
+  font-size:90px;
+  animation:burst 2.5s ease-out infinite;
+}
 
-    /* FIX 1: Proper spacing */
-    #yesBtn { left: 30%; position: absolute; }
-    #noBtn  { left: 60%; position: absolute; }
+@keyframes fall{to{transform:translateY(140vh);}}
+@keyframes launch{to{transform:translateY(-140vh);}}
+@keyframes burst{
+  0%{opacity:0;transform:scale(.3);}
+  40%{opacity:1;}
+  100%{opacity:0;transform:scale(1.5);}
+}
 
-    .hidden { display: none; }
+/* Slides */
+.slide-wrap{
+  display:flex;
+  gap:60px;
+  align-items:center;
+  justify-content:center;
+}
 
-    /* MEMORY LANE */
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px;
-      margin: 22px 0;
-    }
+.card{
+  width:720px;
+  aspect-ratio:3/4;
+  perspective:1600px;
+}
+.inner{
+  width:100%;
+  height:100%;
+  transition:transform .9s;
+  transform-style:preserve-3d;
+}
+.flip .inner{transform:rotateY(180deg);}
+.face{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  border-radius:30px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:28px;
+}
+.front img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:30px;
+}
+.back{
+  background:white;
+  transform:rotateY(180deg);
+  font-size:24px;
+  line-height:1.6;
+}
 
-    .gallery img {
-      width: 100%;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.15);
-      transform: rotate(-2deg);
-    }
+.action-side{
+  min-width:280px;
+  display:flex;
+  align-items:center;
+}
+#actionBtn{margin-left:40px;}
+.val-btn{background:#ff3b7a;color:white;}
+.bd-btn{background:#ff9f1c;color:white;}
 
-    .gallery img:nth-child(even) {
-      transform: rotate(2deg);
-    }
+.fade-left{
+  animation:fadeLeft 1s forwards;
+}
+@keyframes fadeLeft{
+  to{opacity:0;transform:translateX(-120%);}
+}
 
-    #confettiCanvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-    }
+/* Contract */
+.sign-box{
+  border:2px dashed #ccc;
+  padding:24px;
+  border-radius:16px;
+  margin-top:20px;
+  cursor:pointer;
+  font-weight:700;
+}
 
-    p { line-height: 1.6; }
-  </style>
+/* Countdown */
+.count{
+  font-size:100px;
+  font-weight:900;
+}
+</style>
 </head>
 
-<body>
+<body class="start">
 
-<canvas id="confettiCanvas"></canvas>
+<div class="banner hidden" id="banner"></div>
+<div class="fx" id="fx"></div>
 
-<!-- SECTION 1 -->
-<section>
-  <div class="card">
-    <h1>Baby, will you be my Valentine? 💕</h1>
-
-    <div class="button-zone" id="zone">
-      <button id="yesBtn">Yes</button>
-      <button id="noBtn">No</button>
-    </div>
-
-    <p style="font-size:13px; opacity:.7;">
-      (No is feeling shy 😈)
-    </p>
+<!-- Start -->
+<div class="center box" id="start">
+  <h2>Will you be my Valentine? 💕</h2>
+  <div class="zone" id="zone">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
   </div>
-</section>
+</div>
 
-<!-- SECTION 2 -->
-<section id="memories" class="hidden">
-  <div class="card">
-    <h2>Our Memory Lane 🤍</h2>
-
-    <p>
-      Every picture here holds a thousand feelings.
-      Thank you for being my favorite person
-      and for being such a beautiful part of my life.
-    </p>
-
-    <p>
-      I love doing everything with you — eating together,
-      roaming around, laughing at random things,
-      and the best part… <strong>mana-o-ing you</strong> 😌💖
-    </p>
-
-    <p>
-      I love your smile, your eyes, your happiness —
-      honestly, I just love <em>you</em>.
-      Kabhi kabhi chhoti si galti ho jaati hai,
-      but I’m always right here,
-      choosing you and choosing us.
-    </p>
-
-    <div class="gallery">
-      <img src="photos/photo1.jpg">
-      <img src="photos/photo2.jpg">
-      <img src="photos/photo3.jpg">
-      <img src="photos/photo4.jpg">
+<!-- Slides -->
+<div class="center hidden" id="slide">
+  <div class="slide-wrap">
+    <div class="card" id="card">
+      <div class="inner">
+        <div class="face front"><img id="img"></div>
+        <div class="face back" id="msg"></div>
+      </div>
+    </div>
+    <div class="action-side">
+      <button id="actionBtn" class="val-btn hidden">Click me 💖</button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- SECTION 3 -->
-<section id="birthday" class="hidden">
-  <div class="card">
-    <h2>Happy 25th Birthday, baby 🎂✨</h2>
+<!-- Why -->
+<div class="center hidden" id="why">
+  <div class="box" id="typeText"></div>
+</div>
 
-    <p>
-      I hope this year brings you calm days,
-      loud laughs, warm hugs,
-      and everything your heart quietly wishes for.
-    </p>
-
-    <p style="margin-top:20px;">Love you, always 🤍</p>
+<!-- Contract -->
+<div class="center hidden" id="contract">
+  <div class="box">
+    <h2>💖 Love Contract 💖</h2>
+    <p>Signed by me: <b>Dikshant</b> ✍️</p>
+    <div class="sign-box" id="signBox">Tap here to sign ✋</div>
   </div>
-</section>
+</div>
+
+<!-- Countdown -->
+<div class="center hidden" id="countdown">
+  <div id="countNum" class="count"></div>
+</div>
+
+<audio id="romantic" src="music/romantic.mp3" loop></audio>
+<audio id="birthday" src="music/birthday.mp3"></audio>
 
 <script>
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn = document.getElementById("noBtn");
-  const zone = document.getElementById("zone");
+const romanticPhotos=[
+ ["photos/romantic/romantic1.jpg","My favorite place has always been right next to you."],
+ ["photos/romantic/romantic2.jpg","I love this soft, cozy side of you."],
+ ["photos/romantic/romantic3.jpg","Even simple days feel special with you."]
+];
 
-  const memories = document.getElementById("memories");
-  const birthday = document.getElementById("birthday");
+const birthdayPhotos=[
+ ["photos/birthday/birthday1.jpg","The woman who lights up every room."],
+ ["photos/birthday/birthday2.jpg","Grace and beauty, always."],
+ ["photos/birthday/birthday3.jpg","So effortlessly you."],
+ ["photos/birthday/birthday4.jpg","Cute and mischievous 😌"],
+ ["photos/birthday/birthday5.jpg","You make life fun."],
+ ["photos/birthday/birthday6.jpg","My favorite future."]
+];
 
-  let escapeCount = 0;
-  let alertShown = false;
+const lines=[
+ "I choose you because…",
+ "– you calm my chaos",
+ "– you make ordinary days special",
+ "– you feel like home"
+];
 
-  // FIX 2: Gentle NO movement
-  zone.addEventListener("mousemove", e => {
-    const b = noBtn.getBoundingClientRect();
-    const d = Math.hypot(
-      e.clientX - (b.left + b.width / 2),
-      e.clientY - (b.top + b.height / 2)
-    );
+let set=romanticPhotos, index=0, noCount=0, contractDone=false;
 
-    if (d < 120) {
-      const rect = zone.getBoundingClientRect();
-      noBtn.style.left = Math.random() * (rect.width - 100) + "px";
-      noBtn.style.top = Math.random() * (rect.height - 50) + "px";
+const fx=document.getElementById("fx");
+const card=document.getElementById("card");
+const img=document.getElementById("img");
+const msg=document.getElementById("msg");
+const btn=document.getElementById("actionBtn");
 
-      escapeCount++;
+const romanticMusic=document.getElementById("romantic");
+const birthdayMusic=document.getElementById("birthday");
 
-      if (escapeCount >= 4 && !alertShown) {
-        alertShown = true;
-        setTimeout(() => {
-          alert("Haha 😌 there’s no escape from me.\nAll you can do now is press YES 💕");
-        }, 300);
-      }
-    }
-  });
+/* NO BUTTON */
+zone.onmousemove=()=>{
+  no.style.left=Math.random()*200+"px";
+  no.style.top=Math.random()*80+"px";
+  if(++noCount===4){
+    alert("Haha 😌 there’s no escape from me.\nYou HAVE to press YES 💕");
+  }
+};
 
-  // CONFETTI
-  const confettiInstance = confetti.create(
-    document.getElementById("confettiCanvas"),
-    { resize: true }
-  );
+/* YES */
+yes.onclick=()=>{
+  start.classList.add("hidden");
+  document.body.className="valentine";
+  romanticMusic.play();
+  spawnRomanticFX();
+  slide.classList.remove("hidden");
+  loadSlide();
+};
 
-  function boom() {
-    confettiInstance({ particleCount: 160, spread: 120, origin: { y: 0.6 } });
+/* FX */
+function spawnRomanticFX(){
+  fx.innerHTML="";
+  for(let i=0;i<12;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.textContent="❤️";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=12+Math.random()*8+"s";
+    fx.appendChild(h);
+  }
+  for(let i=0;i<8;i++){
+    const t=document.createElement("div");
+    t.className="tulip";
+    t.textContent="🌷";
+    t.style.left=Math.random()*100+"vw";
+    fx.appendChild(t);
+  }
+}
+
+function spawnBirthdayFX(){
+  fx.innerHTML="";
+  const randX=()=>Math.random()*100+"vw";
+
+  for(let i=0;i<8;i++){
+    const r=document.createElement("div");
+    r.className="rocket";
+    r.textContent="🚀";
+    r.style.left=randX();
+    fx.appendChild(r);
   }
 
-  // FIX 3: Slower, cinematic flow
-  yesBtn.addEventListener("click", () => {
-    boom();
+  for(let i=0;i<6;i++){
+    const b=document.createElement("div");
+    b.className="burst";
+    b.textContent="💥";
+    b.style.left=randX();
+    b.style.top=Math.random()*60+"vh";
+    fx.appendChild(b);
+  }
 
-    setTimeout(() => {
-      memories.classList.remove("hidden");
-      memories.scrollIntoView({ behavior: "smooth" });
-    }, 1500);
+  const items=["🎂","🎈","🎉"];
+  for(let i=0;i<16;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.textContent=items[Math.floor(Math.random()*items.length)];
+    c.style.left=randX();
+    c.style.animationDuration=6+Math.random()*5+"s";
+    fx.appendChild(c);
+  }
+}
 
-    setTimeout(() => {
-      boom();
-      birthday.classList.remove("hidden");
-      birthday.scrollIntoView({ behavior: "smooth" });
-    }, 5500);
+/* Slides */
+function loadSlide(){
+  card.className="card";
+  img.src=set[index][0];
+  msg.textContent=set[index][1];
+  btn.classList.remove("hidden");
+
+  btn.onclick=()=>{
+    btn.classList.add("hidden");
+    card.classList.add("flip");
+    setTimeout(()=>{
+      card.classList.remove("flip");
+      card.classList.add("fade-left");
+      setTimeout(nextSlide,1000);
+    },6000);
+  };
+}
+
+function nextSlide(){
+  index++;
+  if(index>=set.length){
+    slide.classList.add("hidden");
+    if(set===romanticPhotos){
+      showWhy();
+    } else {
+      alert("Happy Valentine’s Day ❤️\nAnd Happy Birthday 🎂");
+    }
+    return;
+  }
+  loadSlide();
+}
+
+/* WHY */
+function showWhy(){
+  why.classList.remove("hidden");
+  let i=0,j=0;
+  const el=typeText;
+  const t=setInterval(()=>{
+    el.textContent+=lines[i][j++];
+    if(j>=lines[i].length){
+      el.textContent+="\n";
+      i++; j=0;
+      if(i>=lines.length){
+        clearInterval(t);
+        setTimeout(()=>{
+          why.classList.add("hidden");
+          showContract();
+        },1500);
+      }
+    }
+  },60);
+}
+
+/* CONTRACT */
+function showContract(){
+  contract.classList.remove("hidden");
+}
+
+signBox.onclick=()=>{
+  signBox.textContent="Thank you 😌 haha now you are mine!! ❤️";
+  contractDone=true;
+  setTimeout(startCountdown,1500);
+};
+
+/* COUNTDOWN */
+function startCountdown(){
+  contract.classList.add("hidden");
+  countdown.classList.remove("hidden");
+  let c=3;
+  countNum.textContent=c;
+  const t=setInterval(()=>{
+    c--;
+    if(c>0) countNum.textContent=c;
+    else{
+      clearInterval(t);
+      countdown.classList.add("hidden");
+      smoothToBirthday();
+    }
+  },1000);
+}
+
+/* SMOOTH TRANSITION */
+function smoothToBirthday(){
+  document.body.className="birthday";
+
+  document.querySelectorAll(".heart,.tulip").forEach(el=>{
+    el.style.transition="opacity 3s ease";
+    el.style.opacity=0;
   });
+
+  setTimeout(()=>{
+    spawnBirthdayFX();
+    [...fx.children].forEach(el=>{
+      el.style.opacity=0;
+      el.style.transition="opacity 3s ease";
+      requestAnimationFrame(()=>el.style.opacity=1);
+    });
+  },1000);
+
+  setTimeout(()=>{
+    romanticMusic.pause();
+    birthdayMusic.play();
+    set=birthdayPhotos;
+    index=0;
+    slide.classList.remove("hidden");
+    loadSlide();
+  },3500);
+}
 </script>
 
 </body>
